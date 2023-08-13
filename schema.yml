@@ -1,0 +1,92 @@
+openapi: 3.0.3
+info:
+  title: drf_crud
+  version: 0.0.1
+paths:
+  /masters/:
+    get:
+      operationId: masters_list
+      tags:
+      - masters
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MasterProfileModel'
+          description: ''
+components:
+  schemas:
+    BlankEnum:
+      enum:
+      - ''
+    EducationEnum:
+      enum:
+      - ST
+      - TC
+      - SE
+      - HE
+      type: string
+      description: |-
+        * `ST` - Самоучка
+        * `TC` - Курсы подготовки
+        * `SE` - Среднее специальное
+        * `HE` - Высшее
+    MasterProfileModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          title: Создано
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Обновлено
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 64
+        last_name:
+          type: string
+          title: Фмилия
+          maxLength: 64
+        age:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: Возраст
+        education:
+          nullable: true
+          title: Образование
+          oneOf:
+          - $ref: '#/components/schemas/EducationEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+      required:
+      - age
+      - first_name
+      - id
+      - last_name
+      - updated_at
+    NullEnum:
+      enum:
+      - null
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
