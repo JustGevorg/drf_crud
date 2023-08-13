@@ -16,10 +16,15 @@ class MasterProfilesAPIView(generics.ListAPIView):
 
 
 class EventAPIView(InstanceAvailbilitySafeAPIView):
-    def get(self, request, pk):
-        target_event = self.get_object(pk=pk, model=Event)
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        if pk:
+            target_event = self.get_object(pk=pk, model=Event)
 
-        serializer = EventSerializer(target_event)
+            serializer = EventSerializer(target_event)
+            return response.Response(serializer.data)
+
+        serializer = EventSerializer(Event.objects.all(), many=True)
         return response.Response(serializer.data)
 
     def post(self, request):
